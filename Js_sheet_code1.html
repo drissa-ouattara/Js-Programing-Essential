@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="A practical JavaScript reference for arrays, objects, strings, dates, and common methods.">
+	<title>JavaScript Field Guide</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #f3f6f2;
+			--surface: #ffffff;
+			--ink: #17251f;
+			--muted: #607168;
+			--line: #dce5de;
+			--green: #176b4b;
+			--green-soft: #e5f2e9;
+			--coral: #c8543f;
+			--code: #17251f;
+			--code-text: #e7f2e9;
+			--shadow: 0 10px 28px rgba(23, 37, 31, .06);
+		}
+
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+		body {
+			margin: 0;
+			background: var(--paper);
+			color: var(--ink);
+			font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+			line-height: 1.55;
+		}
+		button, input { font: inherit; }
+		a { color: inherit; }
+		.topbar {
+			position: sticky;
+			z-index: 5;
+			top: 0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			min-height: 62px;
+			padding: 0 5vw;
+			border-bottom: 1px solid var(--line);
+			background: rgba(255, 255, 255, .94);
+			backdrop-filter: blur(12px);
+		}
+		.brand { display: flex; align-items: center; gap: 11px; font-weight: 750; }
+		.brand-mark {
+			display: grid;
+			width: 32px;
+			aspect-ratio: 1;
+			place-items: center;
+			border-radius: 8px;
+			background: var(--green);
+			color: white;
+			font: 700 14px/1 ui-monospace, monospace;
+		}
+		.top-note { color: var(--muted); font-size: 13px; }
+		.layout {
+			display: grid;
+			grid-template-columns: 220px minmax(0, 880px);
+			gap: clamp(28px, 5vw, 76px);
+			width: min(1190px, 92vw);
+			margin: 0 auto;
+			padding: 48px 0 100px;
+		}
+		aside { align-self: start; position: sticky; top: 94px; }
+		.search-label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; }
+		.search-wrap { position: relative; }
+		.search-wrap span { position: absolute; top: 9px; left: 11px; color: var(--muted); }
+		#search {
+			width: 100%;
+			min-height: 40px;
+			padding: 8px 11px 8px 34px;
+			border: 1px solid var(--line);
+			border-radius: 7px;
+			background: var(--surface);
+			color: var(--ink);
+			outline: none;
+		}
+		#search:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+		.nav-title { margin: 26px 0 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+		nav { display: grid; gap: 3px; }
+		nav a { padding: 6px 9px; border-radius: 5px; color: #40534a; font-size: 13px; text-decoration: none; }
+		nav a:hover, nav a:focus-visible { background: var(--green-soft); color: var(--green); }
+		main { min-width: 0; }
+		.eyebrow { margin: 0 0 7px; color: var(--green); font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+		h1, h2, h3, p { margin-top: 0; }
+		h1 { margin-bottom: 9px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(36px, 5vw, 54px); font-weight: 500; line-height: 1.08; }
+		.intro { max-width: 650px; margin-bottom: 34px; color: var(--muted); font-size: 16px; }
+		.topic { padding-top: 29px; margin-top: 34px; border-top: 1px solid var(--line); }
+		.topic-heading { display: flex; align-items: baseline; gap: 12px; margin-bottom: 15px; }
+		.topic-number { color: var(--coral); font: 700 12px ui-monospace, monospace; }
+		h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 500; }
+		.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+		.item {
+			min-width: 0;
+			overflow: hidden;
+			border: 1px solid var(--line);
+			border-radius: 7px;
+			background: var(--surface);
+			box-shadow: var(--shadow);
+		}
+		.item.wide { grid-column: 1 / -1; }
+		.item-body { padding: 15px 16px 10px; }
+		h3 { margin-bottom: 5px; font-size: 15px; }
+		.item p { margin-bottom: 10px; color: var(--muted); font-size: 13px; }
+		.code-wrap { position: relative; border-top: 1px solid #2c4037; background: var(--code); }
+		pre { overflow-x: auto; margin: 0; padding: 14px 16px; color: var(--code-text); font: 12px/1.65 ui-monospace, SFMono-Regular, Consolas, monospace; tab-size: 2; }
+		code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+		.copy {
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			padding: 4px 8px;
+			border: 1px solid #52665c;
+			border-radius: 5px;
+			background: #22352c;
+			color: #edf5ee;
+			cursor: pointer;
+			font-size: 11px;
+		}
+		.copy:hover { background: #345241; }
+		.callout { padding: 12px 14px; border-left: 3px solid var(--coral); background: #fff4ed; color: #58372f; font-size: 13px; }
+		.demo-row { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; padding: 12px 16px 16px; }
+		.seat {
+			width: 46px;
+			height: 38px;
+			border: 1px solid #a9c4ae;
+			border-radius: 5px;
+			background: #e5f2e9;
+			color: #205b3e;
+			cursor: pointer;
+			font-size: 12px;
+			font-weight: 700;
+		}
+		.seat.booked { border-color: #c8543f; background: #c8543f; color: white; cursor: not-allowed; }
+		.action {
+			padding: 8px 12px;
+			border: 0;
+			border-radius: 5px;
+			background: var(--green);
+			color: white;
+			cursor: pointer;
+			font-size: 12px;
+			font-weight: 700;
+		}
+		.action:hover { background: #105539; }
+		.demo-status { flex-basis: 100%; margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+		.empty-state { display: none; padding: 20px 0; color: var(--muted); }
+		footer { margin-top: 42px; padding-top: 17px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+		@media (max-width: 760px) {
+			.topbar { padding: 0 4vw; }
+			.top-note { font-size: 11px; }
+			.layout { display: block; width: 92vw; padding-top: 28px; }
+			aside { position: static; margin-bottom: 30px; }
+			nav { display: flex; overflow-x: auto; padding-bottom: 7px; }
+			nav a { flex: 0 0 auto; }
+			.nav-title { margin-top: 14px; }
+		}
+		@media (max-width: 520px) {
+			.grid { grid-template-columns: 1fr; }
+			.item.wide { grid-column: auto; }
+			.intro { font-size: 14px; }
+			.topic-heading { margin-bottom: 12px; }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; }
+		}
+	</style>
+</head>
+<body>
+	<header class="topbar">
+		<div class="brand"><span class="brand-mark">JS</span><span>JavaScript Field Guide</span></div>
+		<span class="top-note">A practical language reference</span>
+	</header>
+
+	<div class="layout">
+		<aside aria-label="Reference navigation">
+			<label class="search-label" for="search">Find a topic</label>
+			<div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Try: map, date, string" autocomplete="off"></div>
+			<p class="nav-title">Contents</p>
+			<nav>
+				<a href="#arrays">Arrays</a>
+				<a href="#iteration">Iteration</a>
+				<a href="#objects">Objects</a>
+				<a href="#strings">Strings</a>
+				<a href="#math">Math</a>
+				<a href="#dates">Dates &amp; time</a>
+				<a href="#random">Random quote</a>
+			</nav>
+		</aside>
+
+		<main>
+			<p class="eyebrow">JavaScript · Quick reference</p>
+			<h1>Build a stronger<br>JavaScript toolkit.</h1>
+			<p class="intro">A hands-on guide to arrays, objects, strings, and everyday built-ins. Search a concept, scan the example, and copy a snippet to try it yourself.</p>
+			<p class="callout"><strong>Remember:</strong> array indexes start at <code>0</code>. Methods such as <code>push()</code>, <code>pop()</code>, <code>reverse()</code>, and <code>sort()</code> change the original array; <code>map()</code>, <code>filter()</code>, <code>slice()</code>, and <code>concat()</code> return a new value.</p>
+			<p id="emptyState" class="empty-state">No matching examples. Try another search term.</p>
+
+			<section class="topic" id="arrays" data-section>
+				<div class="topic-heading"><span class="topic-number">01</span><h2>Arrays</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3>Declare, index &amp; count</h3><p>Arrays keep values in order. Read the first item at index <code>0</code>; use <code>length</code> to count items.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana", "cherry"];
+const firstFruit = fruits[0];
+const numberOfFruits = fruits.length;
+
+console.log(firstFruit);       // "apple"
+console.log(numberOfFruits);   // 3</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Change an array</h3><p>Arrays are mutable: you can replace an item or assign a value at a new index.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana", "cherry"];
+fruits[2] = "strawberry";
+fruits[3] = "kiwi";
+
+console.log(fruits);</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>push()</code> and <code>pop()</code></h3><p>Add to the end, or remove and return the last item.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana"];
+fruits.push("orange", "strawberry");
+const removedFruit = fruits.pop();
+
+console.log(fruits);       // ["apple", "banana", "orange"]
+console.log(removedFruit); // "strawberry"</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>shift()</code> and <code>unshift()</code></h3><p>Remove from the beginning, or add one or more items at the beginning.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["banana", "orange"];
+fruits.unshift("apple", "strawberry");
+const firstFruit = fruits.shift();
+
+console.log(fruits);     // ["strawberry", "banana", "orange"]
+console.log(firstFruit); // "apple"</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>splice()</code></h3><p>Remove, replace, or insert items in place. Arguments: start index, delete count, then any new items.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana", "cherry"];
+fruits.splice(1, 1, "grape");
+
+console.log(fruits); // ["apple", "grape", "cherry"]</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>concat()</code> and <code>slice()</code></h3><p><code>concat()</code> joins arrays. <code>slice(start, end)</code> copies a portion; the end index is excluded.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana", "cherry", "orange"];
+const moreFruits = fruits.concat(["kiwi"]);
+const selected = fruits.slice(1, 3);
+
+console.log(moreFruits); // [..., "kiwi"]
+console.log(selected);   // ["banana", "cherry"]</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>indexOf()</code></h3><p>Returns the first matching index, or <code>-1</code> when the item is absent.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana", "cherry", "banana"];
+const index = fruits.indexOf("banana");
+
+console.log(index); // 1</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>reverse()</code> and <code>sort()</code></h3><p>Both sort the original array. The default sort compares values as strings; use a comparator for numbers.</p></div>
+						<div class="code-wrap"><pre><code>const numbers = [4, 2, 8, 6, 1, 10];
+numbers.sort((a, b) =&gt; a - b);
+console.log(numbers); // [1, 2, 4, 6, 8, 10]
+
+numbers.reverse(); // reverses this array in place</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="iteration" data-section>
+				<div class="topic-heading"><span class="topic-number">02</span><h2>Iteration &amp; transformation</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>for</code> loop</h3><p>Useful when you need the index or precise control over the loop.</p></div>
+						<div class="code-wrap"><pre><code>const fruits = ["apple", "banana", "cherry"];
+for (let index = 0; index &lt; fruits.length; index++) {
+	console.log(fruits[index]);
+}</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>forEach()</code></h3><p>Runs a function for each item. Use it for an action; it does not create a transformed array.</p></div>
+						<div class="code-wrap"><pre><code>const users = [
+	{ name: "Alice", email: "alice@example.com" },
+	{ name: "Bob", email: "bob@example.com" }
+];
+
+users.forEach((user) =&gt; {
+	console.log(`Welcome email sent to ${user.email}`);
+});</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>map()</code></h3><p>Transforms every item and returns a new array with the results.</p></div>
+						<div class="code-wrap"><pre><code>const products = [
+	{ name: "Laptop", price: 1000 },
+	{ name: "Tablet", price: 300 }
+];
+
+const labels = products.map(
+	(product) =&gt; `${product.name}: $${product.price}`
+);
+console.log(labels);</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>filter()</code></h3><p>Returns a new array containing only items that pass the condition.</p></div>
+						<div class="code-wrap"><pre><code>const products = [
+	{ name: "Laptop", price: 1000 },
+	{ name: "Tablet", price: 300 },
+	{ name: "Keyboard", price: 50 }
+];
+
+const affordable = products.filter(
+	(product) =&gt; product.price &gt;= 100 &amp;&amp; product.price &lt;= 500
+);</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>reduce()</code></h3><p>Combines the array into one value. The second argument sets the initial accumulator.</p></div>
+						<div class="code-wrap"><pre><code>const prices = [50, 30, 25, 40, 15];
+const total = prices.reduce(
+	(sum, price) =&gt; sum + price,
+	0
+);
+
+console.log(total); // 160</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>find()</code></h3><p>Returns the first item that matches, or <code>undefined</code> if nothing matches.</p></div>
+						<div class="code-wrap"><pre><code>const employees = [
+	{ id: 1, name: "Alice" },
+	{ id: 2, name: "Bob" }
+];
+
+const employee = employees.find((person) =&gt; person.id === 2);
+console.log(employee.name); // "Bob"</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="objects" data-section>
+				<div class="topic-heading"><span class="topic-number">03</span><h2>Objects</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3>Object literal &amp; dot notation</h3><p>An object stores values under named properties. Access ordinary property names with a dot.</p></div>
+						<div class="code-wrap"><pre><code>const person = {
+	firstName: "Alice",
+	age: 30,
+	getFullName() {
+		return this.firstName;
+	}
+};
+
+console.log(person.firstName); // "Alice"</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Bracket notation</h3><p>Use brackets when a property name contains spaces or when its name comes from a variable.</p></div>
+						<div class="code-wrap"><pre><code>const person = {
+	"first name": "John",
+	age: 30
+};
+
+console.log(person["first name"]); // "John"
+const key = "age";
+console.log(person[key]);          // 30</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Classes &amp; instances</h3><p>A class defines how its instances are initialized and which methods they have.</p></div>
+						<div class="code-wrap"><pre><code>class Person {
+	constructor(firstName, lastName) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	getFullName() {
+		return `${this.firstName} ${this.lastName}`;
+	}
+}
+
+const person = new Person("John", "Doe");
+console.log(person.getFullName());</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Constructor function</h3><p>A traditional way to create objects. Call it with <code>new</code>; class syntax is common in modern JavaScript.</p></div>
+						<div class="code-wrap"><pre><code>function Car(make, model) {
+	this.make = make;
+	this.model = model;
+}
+
+const car = new Car("Toyota", "Camry");
+console.log(car.make); // "Toyota"</code></pre></div>
+					</article>
+					<article class="item wide" data-item>
+						<div class="item-body"><h3>Arrays of objects &amp; nested data</h3><p>Combine arrays and objects to represent collections of structured records.</p></div>
+						<div class="code-wrap"><pre><code>const students = [
+	{ name: "Alice", age: 25, hobbies: ["Reading", "Traveling"] },
+	{ name: "Bob", age: 22, projects: [{ title: "Project A", completed: true }] }
+];
+
+console.log(students[0].name);                    // "Alice"
+console.log(students[0].hobbies[0]);              // "Reading"
+console.log(students[1].projects[0].title);       // "Project A"
+
+students.push({ name: "Charlie", age: 28 });      // add at end
+const removedStudent = students.pop();            // remove from end
+const adults = students.filter((student) =&gt; student.age &gt;= 23);
+const studentNames = students.map((student) =&gt; student.name);</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="two-dimensional" data-section>
+				<div class="topic-heading"><span class="topic-number">04</span><h2>2D arrays &amp; booking</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3>Rows and columns</h3><p>A 2D array is an array containing arrays. Use two indexes to access a cell.</p></div>
+						<div class="code-wrap"><pre><code>const grid = [
+	[1, 2, 3],
+	[4, 5, 6],
+	[7, 8, 9]
+];
+
+console.log(grid[1][2]); // 6
+
+for (let row = 0; row &lt; grid.length; row++) {
+	for (let column = 0; column &lt; grid[row].length; column++) {
+		console.log(grid[row][column]);
+	}
+}</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Movie theater seats</h3><p><code>O</code> means available and <code>X</code> means booked. Select a seat or book one at random.</p></div>
+						<div class="demo-row" id="seatDemo" aria-label="Interactive seat booking demo"></div>
+						<div class="code-wrap"><pre><code>const seats = [
+	["X", "O", "X"],
+	["O", "X", "O"],
+	["X", "O", "X"]
+];
+
+function bookSeat(row, column) {
+	if (seats[row][column] === "O") {
+		seats[row][column] = "X";
+		return true;
+	}
+	return false;
+}</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="strings" data-section>
+				<div class="topic-heading"><span class="topic-number">05</span><h2>Strings</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3>Length, indexing &amp; case</h3><p>Strings represent text. Their indexes start at zero, and <code>length</code> counts characters.</p></div>
+						<div class="code-wrap"><pre><code>const text = "JavaScript";
+console.log(text.length);       // 10
+console.log(text[0]);           // "J"
+console.log(text.toLowerCase());
+console.log(text.toUpperCase());</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Search within text</h3><p><code>indexOf()</code> returns a position or <code>-1</code>; <code>includes()</code> returns a boolean.</p></div>
+						<div class="code-wrap"><pre><code>const sentence = "The quick brown fox jumps.";
+console.log(sentence.indexOf("fox")); // 16
+console.log(sentence.includes("fox")); // true</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>slice()</code> &amp; <code>substring()</code></h3><p>Both extract text between indexes; the end index is excluded. <code>slice()</code> also supports negative indexes.</p></div>
+						<div class="code-wrap"><pre><code>const text = "Hello, World!";
+console.log(text.substring(0, 5)); // "Hello"
+console.log(text.slice(7));        // "World!"
+console.log(text.slice(-6));       // "World!"</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>replace()</code>, <code>split()</code> &amp; <code>trim()</code></h3><p>Replace text, split a string into an array, or remove whitespace from both ends.</p></div>
+						<div class="code-wrap"><pre><code>const text = "  Alice,25,New York  ";
+const cleanText = text.trim();
+const fields = cleanText.split(",");
+const greeting = cleanText.replace("Alice", "Bob");
+
+console.log(fields); // ["Alice", "25", "New York"]</code></pre></div>
+					</article>
+					<article class="item wide" data-item>
+						<div class="item-body"><h3>Template literals &amp; concatenation</h3><p>Backticks allow interpolation with <code>${...}</code> and multiline strings. The <code>+</code> operator can concatenate strings too.</p></div>
+						<div class="code-wrap"><pre><code>const firstName = "Peter";
+const greeting = `Hello, ${firstName}!`;
+const alsoGreeting = "Hello, " + firstName + "!";
+console.log(greeting);</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="math" data-section>
+				<div class="topic-heading"><span class="topic-number">06</span><h2>Math &amp; randomness</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3>Round numbers</h3><p><code>round()</code> rounds to the nearest integer, <code>ceil()</code> upward, and <code>floor()</code> downward.</p></div>
+						<div class="code-wrap"><pre><code>const number = 3.6;
+console.log(Math.round(number)); // 4
+console.log(Math.ceil(number));  // 4
+console.log(Math.floor(number)); // 3</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Powers, roots &amp; logarithms</h3><p><code>pow()</code> raises a number to a power; <code>sqrt()</code> finds its square root; <code>log()</code> is the natural logarithm.</p></div>
+						<div class="code-wrap"><pre><code>console.log(Math.pow(2, 3)); // 8
+console.log(Math.sqrt(2));   // about 1.414
+console.log(Math.log(2));    // about 0.693</code></pre></div>
+					</article>
+					<article class="item wide" data-item>
+						<div class="item-body"><h3><code>Math.random()</code></h3><p>Returns a decimal from <code>0</code> inclusive to <code>1</code> exclusive. This expression picks a random array index.</p></div>
+						<div class="code-wrap"><pre><code>const quotes = ["Keep learning.", "Make it work, then make it clear."];
+const randomIndex = Math.floor(Math.random() * quotes.length);
+const randomQuote = quotes[randomIndex];
+console.log(randomQuote);</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="dates" data-section>
+				<div class="topic-heading"><span class="topic-number">07</span><h2>Dates &amp; time</h2></div>
+				<div class="grid">
+					<article class="item" data-item>
+						<div class="item-body"><h3>Create a date</h3><p>Month indexes are zero-based in the numeric constructor: <code>0</code> is January.</p></div>
+						<div class="code-wrap"><pre><code>const now = new Date();
+const specificDate = new Date(2023, 0, 15); // Jan 15, 2023
+const fromMilliseconds = new Date(1672569600000);</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Read &amp; format a date</h3><p>Get individual date parts or format according to the user's locale.</p></div>
+						<div class="code-wrap"><pre><code>const date = new Date();
+console.log(date.getFullYear());
+console.log(date.getMonth()); // 0–11
+console.log(date.getDate());  // 1–31
+console.log(date.toLocaleDateString());
+console.log(date.toLocaleTimeString());</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3>Date arithmetic</h3><p>Date setters can adjust a date; for elapsed time, compare timestamps.</p></div>
+						<div class="code-wrap"><pre><code>const date = new Date();
+date.setDate(date.getDate() + 7); // add 7 days
+
+const start = Date.now();
+const end = Date.now();
+const elapsedSeconds = (end - start) / 1000;</code></pre></div>
+					</article>
+					<article class="item" data-item>
+						<div class="item-body"><h3><code>setTimeout()</code></h3><p>Schedules one callback after a delay measured in milliseconds.</p></div>
+						<div class="code-wrap"><pre><code>setTimeout(() =&gt; {
+	console.log("This appears after 2 seconds.");
+}, 2000);</code></pre></div>
+					</article>
+					<article class="item wide" data-item>
+						<div class="item-body"><h3><code>setInterval()</code> &amp; <code>clearInterval()</code></h3><p>Repeats a callback until you cancel it. Keep the returned interval ID so it can be cleared.</p></div>
+						<div class="code-wrap"><pre><code>let count = 0;
+const intervalId = setInterval(() =&gt; {
+	console.log(`Count: ${count}`);
+	count++;
+
+	if (count &gt; 5) {
+		clearInterval(intervalId);
+	}
+}, 1000);</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<section class="topic" id="random" data-section>
+				<div class="topic-heading"><span class="topic-number">08</span><h2>Random quote generator</h2></div>
+				<div class="grid">
+					<article class="item wide" data-item>
+						<div class="item-body"><h3>Choose and display a quote</h3><p>Generate a valid random index, read that array item, and place it in the page.</p></div>
+						<div class="demo-row"><button class="action" id="quoteButton" type="button">Get a quote</button><p class="demo-status" id="quoteDisplay" aria-live="polite">Your next quote will appear here.</p></div>
+						<div class="code-wrap"><pre><code>const quotes = [
+	"Life is what happens when you're busy making other plans.",
+	"The only way to do great work is to love what you do.",
+	"Don't count the days, make the days count."
+];
+
+function generateRandomQuote() {
+	const randomIndex = Math.floor(Math.random() * quotes.length);
+	document.getElementById("quoteDisplay").textContent = quotes[randomIndex];
+}</code></pre></div>
+					</article>
+				</div>
+			</section>
+
+			<footer>JavaScript Field Guide · Keep experimenting, one small example at a time.</footer>
+		</main>
+	</div>
+
+	<script>
+		const searchInput = document.getElementById("search");
+		const referenceItems = [...document.querySelectorAll("[data-item]")];
+		const referenceSections = [...document.querySelectorAll("[data-section]")];
+		const emptyState = document.getElementById("emptyState");
+
+		searchInput.addEventListener("input", () => {
+			const query = searchInput.value.trim().toLowerCase();
+			let visibleItems = 0;
+
+			referenceItems.forEach((item) => {
+				const matches = item.textContent.toLowerCase().includes(query);
+				item.hidden = !matches;
+				if (matches) visibleItems++;
+			});
+
+			referenceSections.forEach((section) => {
+				section.hidden = !section.querySelector("[data-item]:not([hidden])");
+			});
+			emptyState.style.display = visibleItems ? "none" : "block";
+		});
+
+		document.querySelectorAll(".code-wrap").forEach((codeWrap) => {
+			const copyButton = document.createElement("button");
+			copyButton.className = "copy";
+			copyButton.type = "button";
+			copyButton.textContent = "Copy";
+			copyButton.setAttribute("aria-label", "Copy code example");
+			codeWrap.append(copyButton);
+
+			copyButton.addEventListener("click", async () => {
+				const code = codeWrap.querySelector("code").textContent;
+				try {
+					await navigator.clipboard.writeText(code);
+					copyButton.textContent = "Copied";
+				} catch {
+					const temporaryInput = document.createElement("textarea");
+					temporaryInput.value = code;
+					temporaryInput.style.position = "fixed";
+					temporaryInput.style.opacity = "0";
+					document.body.append(temporaryInput);
+					temporaryInput.select();
+					document.execCommand("copy");
+					temporaryInput.remove();
+					copyButton.textContent = "Copied";
+				}
+				window.setTimeout(() => { copyButton.textContent = "Copy"; }, 1400);
+			});
+		});
+
+		const seats = ["X", "O", "X", "O", "X", "O", "X", "O", "X"];
+		const seatDemo = document.getElementById("seatDemo");
+		const seatStatus = document.createElement("p");
+		seatStatus.className = "demo-status";
+		seatStatus.setAttribute("aria-live", "polite");
+
+		function renderSeats() {
+			seatDemo.replaceChildren();
+			seats.forEach((status, index) => {
+				const seat = document.createElement("button");
+				const row = Math.floor(index / 3);
+				const column = index % 3;
+				seat.className = status === "X" ? "seat booked" : "seat";
+				seat.textContent = `${String.fromCharCode(65 + row)}${column + 1}`;
+				seat.type = "button";
+				seat.disabled = status === "X";
+				seat.setAttribute("aria-label", `${seat.textContent}, ${status === "X" ? "booked" : "available"}`);
+				seat.addEventListener("click", () => bookSeat(index));
+				seatDemo.append(seat);
+			});
+
+			const randomButton = document.createElement("button");
+			randomButton.className = "action";
+			randomButton.type = "button";
+			randomButton.textContent = "Book random seat";
+			randomButton.addEventListener("click", bookRandomSeat);
+			seatDemo.append(randomButton, seatStatus);
+		}
+
+		function bookSeat(index) {
+			if (seats[index] !== "O") return;
+			seats[index] = "X";
+			seatStatus.textContent = `Seat ${String.fromCharCode(65 + Math.floor(index / 3))}${index % 3 + 1} booked.`;
+			renderSeats();
+		}
+
+		function bookRandomSeat() {
+			const availableSeats = seats
+				.map((status, index) => status === "O" ? index : -1)
+				.filter((index) => index !== -1);
+			if (availableSeats.length === 0) {
+				seatStatus.textContent = "All seats are booked.";
+				return;
+			}
+			const randomIndex = Math.floor(Math.random() * availableSeats.length);
+			bookSeat(availableSeats[randomIndex]);
+		}
+
+		renderSeats();
+		document.getElementById("quoteButton").addEventListener("click", () => {
+			const quotes = [
+				"Life is what happens when you're busy making other plans.",
+				"The only way to do great work is to love what you do.",
+				"Don't count the days, make the days count.",
+				"Keep learning. Make it work, then make it clear."
+			];
+			const randomIndex = Math.floor(Math.random() * quotes.length);
+			document.getElementById("quoteDisplay").textContent = quotes[randomIndex];
+		});
+	</script>
+</body>
+</html>
