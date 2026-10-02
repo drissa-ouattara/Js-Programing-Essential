@@ -40,3 +40,4 @@ function clearCompletedTasks() {
     displayTasks();
 }
 
+document.getElementsByTagName
